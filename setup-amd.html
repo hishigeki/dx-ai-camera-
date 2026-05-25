@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>セットアップ（AMD）| DX学科 AI体験</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .cpu-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,107,53,0.1);
+      border: 1px solid rgba(255,107,53,0.35);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: #FF6B35;
+      margin-bottom: 20px;
+    }
+    .step-num.amd { background: #FF6B35; }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">DX</a>
+    <ul class="nav-links">
+      <li><a href="index.html">ホーム</a></li>
+      <li><a href="setup-intel.html">セットアップ（Intel）</a></li>
+      <li><a href="setup-amd.html" class="active">セットアップ（AMD）</a></li>
+      <li><a href="exercise.html">演習 Step 1〜5</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="cpu-badge">🔴 AMD CPU 版</div>
+  <h1>セットアップ<br><span class="accent">AMD CPU</span></h1>
+  <p>AMD CPU では追加で VC++ ランタイムのインストールが必要です。<br>所要時間：約 10〜15 分</p>
+</section>
+
+<div class="section">
+
+  <!-- 進捗 -->
+  <div class="progress-bar">
+    <div class="progress-step active">
+      <div class="ps-circle">⚙</div>
+      <div class="ps-label">セットアップ<br>AMD</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">1</div>
+      <div class="ps-label">インストール</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">2</div>
+      <div class="ps-label">カメラ</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">3</div>
+      <div class="ps-label">AI検出</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">4</div>
+      <div class="ps-label">枠の色</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">5</div>
+      <div class="ps-label">信頼度</div>
+    </div>
+  </div>
+
+  <!-- AMD特有の説明 -->
+  <div class="info-box warn mb-24">
+    <span class="ib-icon">⚠️</span>
+    <div class="ib-body">
+      <div class="ib-title">AMD CPU で起きやすい問題</div>
+      <p>AMD CPU では PyTorch（AI ライブラリ）が必要とする <code>c10.dll</code> の初期化に失敗することがあります。Visual C++ ランタイムを先にインストールすることで解決できます。</p>
+    </div>
+  </div>
+
+  <!-- Step A: VC++ -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num amd">A</div>
+      <div>
+        <div class="step-title">Visual C++ ランタイムをインストールする</div>
+        <div class="step-subtitle">AMD CPU では必須の追加作業です</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <p class="text-sm text-muted mb-12">ブラウザで以下の URL を開いてダウンロード・実行してください。</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">URL</span>
+          <button class="copy-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            コピー
+          </button>
+        </div>
+        <div class="code-content">
+          <pre>https://aka.ms/vs/17/release/vc_redist.x64.exe</pre>
+        </div>
+      </div>
+
+      <div class="info-box warn mt-16">
+        <span class="ib-icon">🔄</span>
+        <div class="ib-body">
+          <div class="ib-title">インストール後は必ず再起動！</div>
+          <p>インストールが完了したら、パソコンを再起動してください。再起動しないと効果が出ません。</p>
+        </div>
+      </div>
+
+      <ul class="checklist mt-16">
+        <li>vc_redist.x64.exe をダウンロードして実行した</li>
+        <li>インストールが完了した</li>
+        <li>パソコンを再起動した</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Step B: Python -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num amd">B</div>
+      <div>
+        <div class="step-title">公式 Python をインストールする</div>
+        <div class="step-subtitle">Microsoftストア版ではなく、公式サイトからダウンロードします</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <p class="text-sm text-muted mb-12">ブラウザで以下の URL を開いてダウンロードしてください。</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">URL</span>
+          <button class="copy-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            コピー
+          </button>
+        </div>
+        <div class="code-content">
+          <pre>https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe</pre>
+        </div>
+      </div>
+
+      <div class="info-box warn mt-16">
+        <span class="ib-icon">⚠️</span>
+        <div class="ib-body">
+          <div class="ib-title">インストール時に必ずチェック！</div>
+          <p>インストール画面の一番下にある<br>
+          <code>"Add Python 3.11 to PATH"</code> にチェックを入れてから「Install Now」をクリック！<br>
+          これを忘れると Python が正しく動きません。</p>
+        </div>
+      </div>
+
+      <ul class="checklist mt-16">
+        <li>ダウンロードしてインストーラーを実行した</li>
+        <li>"Add Python 3.11 to PATH" にチェックを入れた</li>
+        <li>「Install Now」でインストール完了した</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Step C: VS Code -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num amd">C</div>
+      <div>
+        <div class="step-title">VS Code をインストールする</div>
+        <div class="step-subtitle">コードを書くためのエディタです</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">URL</span>
+          <button class="copy-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            コピー
+          </button>
+        </div>
+        <div class="code-content">
+          <pre>https://code.visualstudio.com/</pre>
+        </div>
+      </div>
+
+      <div class="info-box info mt-16">
+        <span class="ib-icon">💡</span>
+        <div class="ib-body">
+          <div class="ib-title">インストール後にやること</div>
+          <p>VS Code を起動 → 拡張機能アイコン → 検索バーに <code>Python</code> → Microsoft 製をインストール<br>
+          デスクトップに <code>ai_camera</code> フォルダを作成 → VS Code で開く</p>
+        </div>
+      </div>
+
+      <ul class="checklist mt-16">
+        <li>VS Code をインストールした</li>
+        <li>Python 拡張機能をインストールした</li>
+        <li>ai_camera フォルダを作って VS Code で開いた</li>
+        <li>VS Code を一度閉じて開き直した</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 完了 -->
+  <div class="info-box success">
+    <span class="ib-icon">✅</span>
+    <div class="ib-body">
+      <div class="ib-title">セットアップ完了！</div>
+      <p>AMD CPU のセットアップはこれで終わりです。次のページから演習を始めましょう。Step 1 のライブラリインストールは Intel 版と同じコマンドです。</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ページナビ -->
+<div class="page-nav">
+  <a href="index.html" class="btn btn-outline">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    ホームに戻る
+  </a>
+  <a href="exercise.html" class="btn btn-primary">
+    演習 Step 1 へ進む
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+</div>
+
+<footer class="site-footer">
+  <strong>DX学科</strong> オープンキャンパス AI体験授業　フォローアップサイト
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

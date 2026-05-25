@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>演習 Step 1〜5 | DX学科 AI体験</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* 演習ページ固有 */
+    .exercise-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(214,51,132,0.12);
+      border: 1px solid rgba(214,51,132,0.3);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: var(--pink-light);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .check-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--code-green);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .check-label::before { content: '✅'; }
+
+    .result-box {
+      background: rgba(80,250,123,0.06);
+      border: 1px solid rgba(80,250,123,0.25);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin-top: 12px;
+    }
+
+    .result-box .check-label { margin-bottom: 8px; }
+    .result-box p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* 穴埋め欄 */
+    .blank-box {
+      display: inline-block;
+      min-width: 80px;
+      border-bottom: 2px solid var(--pink);
+      padding: 0 8px;
+      color: var(--pink);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    /* タブ */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .tab-btn {
+      padding: 8px 18px;
+      font-size: 13px;
+      font-family: 'Noto Sans JP', sans-serif;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all var(--transition);
+    }
+
+    .tab-btn.active {
+      color: var(--pink-light);
+      border-bottom-color: var(--pink);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* カラーパレット */
+    .color-palette {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .color-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--navy-card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .color-swatch {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .color-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* 答え合わせテーブル */
+    .answer-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 16px;
+    }
+
+    .answer-table th {
+      background: var(--pink-dark);
+      color: var(--white);
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .answer-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--text-muted);
+    }
+
+    .answer-table tr:nth-child(even) td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .answer-table td:nth-child(3) {
+      color: var(--code-green);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* セクション区切り */
+    .step-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 40px 0 32px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .step-divider::before, .step-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    /* チャレンジカード */
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .challenge-card {
+      background: var(--navy-card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color var(--transition);
+    }
+
+    .challenge-card:hover { border-color: rgba(214,51,132,0.35); }
+
+    .challenge-head {
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .challenge-head.easy   { background: rgba(40,167,69,0.15);  color: var(--code-green); }
+    .challenge-head.normal { background: rgba(17,85,204,0.15);  color: #60BFFF; }
+    .challenge-head.hard   { background: rgba(214,51,132,0.15); color: var(--pink-light); }
+
+    .challenge-body {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">DX</a>
+    <ul class="nav-links">
+      <li><a href="index.html">ホーム</a></li>
+      <li><a href="setup-intel.html">セットアップ（Intel）</a></li>
+      <li><a href="setup-amd.html">セットアップ（AMD）</a></li>
+      <li><a href="exercise.html" class="active">演習 Step 1〜5</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge"><span></span>Intel・AMD 共通</div>
+  <h1>演習<br><span class="accent">Step 1〜5</span></h1>
+  <p>コードをコピーして VS Code に貼り付け、実行しよう。<br>
+  ピンクの <span style="color:var(--pink);font-family:monospace;">□□</span> 部分だけ自分で考えて入力！</p>
+</section>
+
+<div class="section">
+
+  <!-- 進捗バー -->
+  <div class="progress-bar" id="progress">
+    <div class="progress-step done">
+      <div class="ps-circle">⚙</div>
+      <div class="ps-label">セットアップ<br>完了</div>
+    </div>
+    <div class="progress-step active">
+      <div class="ps-circle">1</div>
+      <div class="ps-label">インストール</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">2</div>
+      <div class="ps-label">カメラ</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">3</div>
+      <div class="ps-label">AI検出</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">4</div>
+      <div class="ps-label">枠の色</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">5</div>
+      <div class="ps-label">信頼度</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- Step 1: ライブラリインストール            -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="step-card" id="step1">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">ライブラリをインストールしよう</div>
+        <div class="step-subtitle">VS Code のターミナル（Ctrl+@）に貼り付けて実行</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <p class="text-sm text-muted mb-12">2つのコマンドを順番に実行してください。</p>
+
+      <p class="text-sm fw-bold mb-8">① opencv と ultralytics をインストール</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">ターミナル</span>
+          <button class="copy-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            コピー
+          </button>
+        </div>
+        <div class="code-content">
+          <pre>pip install opencv-python ultralytics</pre>
+        </div>
+      </div>
+
+      <p class="text-sm fw-bold mb-8 mt-16">② PyTorch をインストール</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">ターミナル</span>
+          <button class="copy-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            コピー
+          </button>
+        </div>
+        <div class="code-content">
+          <pre>pip install torch torchvision</pre>
+        </div>
+      </div>
+
+      <div class="result-box mt-16">
+        <div class="check-label">確認：こう表示されれば成功！</div>
+        <p><code style="font-family:monospace;color:var(--code-green);">Successfully installed ...</code> と表示されれば OK</p>
+      </div>
+
+      <ul class="checklist mt-16">
+        <li>opencv-python と ultralytics がインストールされた</li>
+        <li>torch と torchvision がインストールされた</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-divider">Step 2 からはコードを camera_ai.py に貼り付けて実行します</div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- Step 2: カメラ起動                       -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="step-card" id="step2">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">カメラを起動してリアルタイム映像を表示しよう</div>
+        <div class="step-subtitle">camera_ai.py に貼り付けて ▶ または F5 で実行</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <div class="exercise-label">✏️ 演習①</div>
+      <p class="text-sm text-muted mb-16">
+        パソコンにはカメラが複数ある場合があります。どのカメラを使うか番号で指定します。<br>
+        内蔵カメラは <code style="font-family:monospace;color:var(--pink);">0</code>、外付け USB カメラは <code style="font-family:monospace;color:var(--pink);">1</code> です。
+      </p>
+
+      <!-- タブ：演習 / 答え -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(this,'tab-s2-ex')">演習コード</button>
+        <button class="tab-btn" onclick="switchTab(this,'tab-s2-ans')">答え合わせ</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-s2-ex">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">camera_ai.py</span>
+            <button class="copy-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              コピー
+            </button>
+          </div>
+          <div class="code-content">
+<pre><span class="kw">import</span> cv2
+
+<span class="cm"># ── 演習①：カメラの番号を指定 ──</span>
+<span class="cm"># 内蔵カメラ = 0   USBカメラ = 1</span>
+cap = cv2.<span class="fn">VideoCapture</span>( <span class="blank-box">□□</span> )
+
+<span class="kw">if not</span> cap.<span class="fn">isOpened</span>():
+    <span class="fn">print</span>(<span class="str">"エラー：カメラが見つかりません"</span>)
+    <span class="fn">exit</span>()
+
+<span class="cm"># ループでリアルタイム映像を表示</span>
+<span class="kw">while</span> <span class="num">True</span>:
+    ret, frame = cap.<span class="fn">read</span>()
+    <span class="kw">if not</span> ret: <span class="kw">break</span>
+    cv2.<span class="fn">imshow</span>(<span class="str">"Step2: Camera"</span>, frame)
+    <span class="kw">if</span> cv2.<span class="fn">waitKey</span>(<span class="num">1</span>) &amp; <span class="num">0xFF</span> == <span class="fn">ord</span>(<span class="str">'q'</span>): <span class="kw">break</span>
+
+cap.<span class="fn">release</span>()
+cv2.<span class="fn">destroyAllWindows</span>()</pre>
+          </div>
+        </div>
+        <div class="info-box info mt-12">
+          <span class="ib-icon">💡</span>
+          <div class="ib-body">
+            <div class="ib-title">ヒント</div>
+            <p><code>VideoCapture( □□ )</code> の <code>□□</code> に内蔵カメラの番号（0か1）を入れよう。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-s2-ans">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">答え</span>
+            <button class="copy-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              コピー
+            </button>
+          </div>
+          <div class="code-content">
+<pre><span class="kw">import</span> cv2
+
+cap = cv2.<span class="fn">VideoCapture</span>( <span class="num">0</span> )  <span class="cm"># ← 内蔵カメラは 0</span>
+
+<span class="kw">if not</span> cap.<span class="fn">isOpened</span>():
+    <span class="fn">print</span>(<span class="str">"エラー：カメラが見つかりません"</span>)
+    <span class="fn">exit</span>()
+
+<span class="kw">while</span> <span class="num">True</span>:
+    ret, frame = cap.<span class="fn">read</span>()
+    <span class="kw">if not</span> ret: <span class="kw">break</span>
+    cv2.<span class="fn">imshow</span>(<span class="str">"Step2: Camera"</span>, frame)
+    <span class="kw">if</span> cv2.<span class="fn">waitKey</span>(<span class="num">1</span>) &amp; <span class="num">0xFF</span> == <span class="fn">ord</span>(<span class="str">'q'</span>): <span class="kw">break</span>
+
+cap.<span class="fn">release</span>()
+cv2.<span class="fn">destroyAllWindows</span>()</pre>
+          </div>
+        </div>
+        <div class="info-box success mt-12">
+          <span class="ib-icon">🔑</span>
+          <div class="ib-body">
+            <div class="ib-title">ポイント</div>
+            <p>カメラは 0 から順番に番号がつく。ノートPCなら内蔵カメラは <code>0</code>！</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box mt-16">
+        <div class="check-label">確認：ウィンドウが開いてカメラ映像がリアルタイムで動く</div>
+        <p>終了するには：ウィンドウをクリックしてから <code style="font-family:monospace;color:var(--pink);">q</code> キーを押す</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- Step 3: AI 物体検出                      -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="step-card" id="step3">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">AIで物体を検出して名前を表示しよう</div>
+        <div class="step-subtitle">camera_ai.py に丸ごと上書きして実行</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <div class="exercise-label">✏️ 演習②</div>
+      <p class="text-sm text-muted mb-12">AIモデルには速さと精度が異なる種類があります。一番速い（軽い）モデルの名前を入れよう。</p>
+
+      <div class="color-palette mb-16">
+        <div class="color-chip">
+          <div class="color-swatch" style="background:#1E90FF;"></div>
+          <div>
+            <div class="text-xs fw-bold" style="color:#60BFFF;">yolov8n.pt</div>
+            <div class="color-code">速さ：⚡⚡⚡⚡⚡　← 今日はこれ！</div>
+          </div>
+        </div>
+        <div class="color-chip">
+          <div class="color-swatch" style="background:#888;"></div>
+          <div>
+            <div class="text-xs fw-bold">yolov8s.pt</div>
+            <div class="color-code">速さ：⚡⚡⚡⚡</div>
+          </div>
+        </div>
+        <div class="color-chip">
+          <div class="color-swatch" style="background:#888;"></div>
+          <div>
+            <div class="text-xs fw-bold">yolov8m.pt</div>
+            <div class="color-code">速さ：⚡⚡⚡</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(this,'tab-s3-ex')">演習コード</button>
+        <button class="tab-btn" onclick="switchTab(this,'tab-s3-ans')">答え合わせ</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-s3-ex">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">camera_ai.py（上書き）</span>
+            <button class="copy-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              コピー
+            </button>
+          </div>
+          <div class="code-content">
+<pre><span class="kw">import</span> cv2
+<span class="kw">from</span> ultralytics <span class="kw">import</span> YOLO
+
+<span class="cm"># ── 演習②：AIモデルの名前を指定 ──</span>
+model = <span class="fn">YOLO</span>( <span class="str">'<span class="blank-box" style="color:var(--pink);">□□□□□□□□□□</span>'</span> )
+
+cap = cv2.<span class="fn">VideoCapture</span>(<span class="num">0</span>)
+<span class="kw">while</span> <span class="num">True</span>:
+    ret, frame = cap.<span class="fn">read</span>()
+    <span class="kw">if not</span> ret: <span class="kw">break</span>
+    results = <span class="fn">model</span>(frame, verbose=<span class="num">False</span>)
+    names = [model.names[<span class="fn">int</span>(b.cls[<span class="num">0</span>])]
+             <span class="kw">for</span> r <span class="kw">in</span> results <span class="kw">for</span> b <span class="kw">in</span> r.boxes]
+    label = <span class="str">'Found: '</span> + <span class="str">', '</span>.<span class="fn">join</span>(names) <span class="kw">if</span> names <span class="kw">else</span> <span class="str">'Found: nothing'</span>
+    cv2.<span class="fn">putText</span>(frame, label, (<span class="num">10</span>,<span class="num">40</span>),
+                cv2.FONT_HERSHEY_SIMPLEX, <span class="num">0.8</span>, (<span class="num">255</span>,<span class="num">255</span>,<span class="num">0</span>), <span class="num">2</span>)
+    cv2.<span class="fn">imshow</span>(<span class="str">"Step3: AI Detection"</span>, frame)
+    <span class="kw">if</span> cv2.<span class="fn">waitKey</span>(<span class="num">1</span>) &amp; <span class="num">0xFF</span> == <span class="fn">ord</span>(<span class="str">'q'</span>): <span class="kw">break</span>
+
+cap.<span class="fn">release</span>()
+cv2.<span class="fn">destroyAllWindows</span>()</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-s3-ans">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">答え</span>
+            <button class="copy-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              コピー
+            </button>
+          </div>
+          <div class="code-content">
+<pre>model = <span class="fn">YOLO</span>( <span class="str">'yolov8n.pt'</span> )  <span class="cm"># ← Nano（一番速い）</span>
+<span class="cm"># 初回はモデルのダウンロードが始まります（数分）</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box mt-16">
+        <div class="check-label">確認：映像の左上に "Found: person" など物体名が表示される</div>
+        <p>初回はモデルのダウンロードが走ります。少し待ってください。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- Step 4: 枠の色                           -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="step-card" id="step4">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title">検出した物体に色付きの枠を描こう</div>
+        <div class="step-subtitle">camera_ai.py に丸ごと上書きして実行</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <div class="exercise-label">✏️ 演習③</div>
+      <p class="text-sm text-muted mb-12">枠の色を RGB で指定します。OpenCV は <strong style="color:var(--gold);">BGR（青・緑・赤）の順番</strong>なので注意！</p>
+
+      <div class="color-palette mb-16">
+        <div class="color-chip">
+          <div class="color-swatch" style="background:#33AA33;"></div>
+          <div>
+            <div class="text-xs fw-bold" style="color:#33AA33;">緑</div>
+            <div class="color-code">(0, 255, 0)</div>
+          </div>
+        </div>
+        <div class="color-chip">
+          <div class="color-swatch" style="background:#EE3333;"></div>
+          <div>
+            <div class="text-xs fw-bold" style="color:#EE3333;">赤</div>
+            <div class="color-code">(0, 0, 255)</div>
+          </div>
+        </div>
+        <div class="color-chip">
+          <div class="color-swatch" style="background:#3333EE;"></div>
+          <div>
+            <div class="text-xs fw-bold" style="color:#6699FF;">青</div>
+            <div class="color-code">(255, 0, 0)</div>
+          </div>
+        </div>
+        <div class="color-chip">
+          <div class="color-swatch" style="background:#CCCC00;"></div>
+          <div>
+            <div class="text-xs fw-bold" style="color:#FFFF66;">黄</div>
+            <div class="color-code">(0, 255, 255)</div>
+          </div>
+        </div>
+        <div class="color-chip">
+          <div class="color-swatch" style="background:#CC33CC;"></div>
+          <div>
+            <div class="text-xs fw-bold" style="color:#FF66FF;">紫</div>
+            <div class="color-code">(255, 0, 255)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(this,'tab-s4-ex')">演習コード</button>
+        <button class="tab-btn" onclick="switchTab(this,'tab-s4-ans')">答え合わせ</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-s4-ex">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">camera_ai.py（上書き）</span>
+            <button class="copy-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              コピー
+            </button>
+          </div>
+          <div class="code-content">
+<pre><span class="kw">import</span> cv2
+<span class="kw">from</span> ultralytics <span class="kw">import</span> YOLO
+
+model = <span class="fn">YOLO</span>(<span class="str">'yolov8n.pt'</span>)
+cap = cv2.<span class="fn">VideoCapture</span>(<span class="num">0</span>)
+<span class="kw">while</span> <span class="num">True</span>:
+    ret, frame = cap.<span class="fn">read</span>()
+    <span class="kw">if not</span> ret: <span class="kw">break</span>
+    results = <span class="fn">model</span>(frame, verbose=<span class="num">False</span>)
+    <span class="kw">for</span> r <span class="kw">in</span> results:
+        <span class="kw">for</span> box <span class="kw">in</span> r.boxes:
+            x1,y1,x2,y2 = <span class="fn">map</span>(<span class="fn">int</span>, box.xyxy[<span class="num">0</span>])
+            name = model.names[<span class="fn">int</span>(box.cls[<span class="num">0</span>])]
+            <span class="cm"># ── 演習③：枠の色を (B,G,R) で指定 ──</span>
+            <span class="cm"># 例：緑=(0,255,0)  赤=(0,0,255)</span>
+            color = ( <span class="blank-box">□□□</span>, <span class="blank-box">□□□</span>, <span class="blank-box">□□□</span> )
+            cv2.<span class="fn">rectangle</span>(frame,(x1,y1),(x2,y2),color,<span class="num">2</span>)
+            cv2.<span class="fn">putText</span>(frame,name,(x1,y1-<span class="num">10</span>),
+                        cv2.FONT_HERSHEY_SIMPLEX,<span class="num">0.6</span>,color,<span class="num">2</span>)
+    cv2.<span class="fn">imshow</span>(<span class="str">"Step4: Bounding Box"</span>,frame)
+    <span class="kw">if</span> cv2.<span class="fn">waitKey</span>(<span class="num">1</span>) &amp; <span class="num">0xFF</span> == <span class="fn">ord</span>(<span class="str">'q'</span>): <span class="kw">break</span>
+
+cap.<span class="fn">release</span>()
+cv2.<span class="fn">destroyAllWindows</span>()</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-s4-ans">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">答え例</span>
+            <button class="copy-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              コピー
+            </button>
+          </div>
+          <div class="code-content">
+<pre>color = ( <span class="num">0</span>, <span class="num">255</span>, <span class="num">0</span> )   <span class="cm"># 緑</span>
+<span class="cm"># color = ( 0, 0, 255 )   # 赤</span>
+<span class="cm"># color = ( 255, 0, 0 )   # 青</span>
+<span class="cm"># color = ( 0, 255, 255 ) # 黄</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box mt-16">
+        <div class="check-label">確認：物体の周りに選んだ色の枠と物体名がリアルタイムで表示される</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- Step 5: 信頼度                           -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="step-card" id="step5">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div>
+        <div class="step-title">信頼度のしきい値を設定しよう</div>
+        <div class="step-subtitle">camera_ai.py に丸ごと上書きして実行</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <div class="exercise-label">✏️ 演習④</div>
+      <p class="text-sm text-muted mb-16">
+        AI が「これは〇〇だ！」と判断するとき、どのくらい確信していたら表示するかを <code style="font-family:monospace;">0〜1</code> の数値で設定します。
+      </p>
+
+      <div class="color-palette mb-16">
+        <div class="color-chip" style="border-color:rgba(40,167,69,0.3);">
+          <div><div class="text-xs fw-bold" style="color:var(--code-green);">conf = 0.9</div><div class="color-code">90%確信 → 厳選（少ない）</div></div>
+        </div>
+        <div class="color-chip" style="border-color:rgba(255,193,7,0.3);">
+          <div><div class="text-xs fw-bold" style="color:var(--gold);">conf = 0.5</div><div class="color-code">50%確信 → バランスよい ★推奨</div></div>
+        </div>
+        <div class="color-chip" style="border-color:rgba(214,51,132,0.3);">
+          <div><div class="text-xs fw-bold" style="color:var(--pink);">conf = 0.1</div><div class="color-code">10%確信 → なんでも検出</div></div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(this,'tab-s5-ex')">演習コード</button>
+        <button class="tab-btn" onclick="switchTab(this,'tab-s5-ans')">答え合わせ</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-s5-ex">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">camera_ai.py（上書き）</span>
+            <button class="copy-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              コピー
+            </button>
+          </div>
+          <div class="code-content">
+<pre><span class="kw">import</span> cv2
+<span class="kw">from</span> ultralytics <span class="kw">import</span> YOLO
+
+model = <span class="fn">YOLO</span>(<span class="str">'yolov8n.pt'</span>)
+cap = cv2.<span class="fn">VideoCapture</span>(<span class="num">0</span>)
+<span class="kw">while</span> <span class="num">True</span>:
+    ret, frame = cap.<span class="fn">read</span>()
+    <span class="kw">if not</span> ret: <span class="kw">break</span>
+    <span class="cm"># ── 演習④：信頼度のしきい値を指定 ──</span>
+    <span class="cm"># 0.3→多め  0.5→バランス  0.8→厳選</span>
+    results = <span class="fn">model</span>(frame, conf=<span class="blank-box">□.□</span>, verbose=<span class="num">False</span>)
+    count = <span class="num">0</span>
+    <span class="kw">for</span> r <span class="kw">in</span> results:
+        <span class="kw">for</span> box <span class="kw">in</span> r.boxes:
+            x1,y1,x2,y2 = <span class="fn">map</span>(<span class="fn">int</span>,box.xyxy[<span class="num">0</span>])
+            name = model.names[<span class="fn">int</span>(box.cls[<span class="num">0</span>])]
+            conf_v = <span class="fn">float</span>(box.conf[<span class="num">0</span>])
+            cv2.<span class="fn">rectangle</span>(frame,(x1,y1),(x2,y2),(<span class="num">0</span>,<span class="num">255</span>,<span class="num">0</span>),<span class="num">2</span>)
+            cv2.<span class="fn">putText</span>(frame,<span class="fn">f</span><span class="str">'{name} {conf_v:.2f}'</span>,(x1,y1-<span class="num">10</span>),
+                        cv2.FONT_HERSHEY_SIMPLEX,<span class="num">0.6</span>,(<span class="num">0</span>,<span class="num">255</span>,<span class="num">0</span>),<span class="num">2</span>)
+            count += <span class="num">1</span>
+    cv2.<span class="fn">putText</span>(frame,<span class="fn">f</span><span class="str">'Count:{count}'</span>,(<span class="num">10</span>,<span class="num">40</span>),
+                cv2.FONT_HERSHEY_SIMPLEX,<span class="num">1.0</span>,(<span class="num">0</span>,<span class="num">255</span>,<span class="num">255</span>),<span class="num">2</span>)
+    cv2.<span class="fn">imshow</span>(<span class="str">"Step5: Confidence"</span>,frame)
+    <span class="kw">if</span> cv2.<span class="fn">waitKey</span>(<span class="num">1</span>) &amp; <span class="num">0xFF</span> == <span class="fn">ord</span>(<span class="str">'q'</span>): <span class="kw">break</span>
+
+cap.<span class="fn">release</span>()
+cv2.<span class="fn">destroyAllWindows</span>()</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-s5-ans">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">答え例</span>
+            <button class="copy-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              コピー
+            </button>
+          </div>
+          <div class="code-content">
+<pre>results = <span class="fn">model</span>(frame, conf=<span class="num">0.5</span>, verbose=<span class="num">False</span>)
+<span class="cm"># 0.5 = 50%以上確信したものだけ表示（推奨）</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box mt-16">
+        <div class="check-label">確認：画面左上に "Count:X" が表示され、conf 値を変えると数が変わる</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- 完成版フルコード                          -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="step-divider">🏆 完成版フルコード</div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num" style="background:var(--gold);color:#1C1C2E;">🏆</div>
+      <div>
+        <div class="step-title">完成！フルコードを実行しよう</div>
+        <div class="step-subtitle">演習①〜④で決めた値を使った完成版</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">camera_ai.py（完成版）</span>
+          <button class="copy-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            コピー
+          </button>
+        </div>
+        <div class="code-content">
+<pre><span class="kw">import</span> cv2
+<span class="kw">from</span> ultralytics <span class="kw">import</span> YOLO
+
+<span class="cm"># ① AIモデル読み込み（演習②で決めた）</span>
+model = <span class="fn">YOLO</span>(<span class="str">'yolov8n.pt'</span>)
+
+<span class="cm"># ② カメラ指定（演習①で決めた番号）</span>
+cap = cv2.<span class="fn">VideoCapture</span>(<span class="num">0</span>)
+
+<span class="kw">if not</span> cap.<span class="fn">isOpened</span>():
+    <span class="fn">print</span>(<span class="str">"エラー：カメラを開けませんでした"</span>)
+    <span class="fn">exit</span>()
+
+<span class="fn">print</span>(<span class="str">"AI カメラ起動！ 'q' キーで終了"</span>)
+
+<span class="kw">while</span> <span class="num">True</span>:
+    ret, frame = cap.<span class="fn">read</span>()
+    <span class="kw">if not</span> ret: <span class="kw">break</span>
+
+    <span class="cm"># ③ AI検出（演習④で決めた conf 値）</span>
+    results = <span class="fn">model</span>(frame, conf=<span class="num">0.5</span>, verbose=<span class="num">False</span>)
+
+    <span class="kw">for</span> r <span class="kw">in</span> results:
+        <span class="kw">for</span> box <span class="kw">in</span> r.boxes:
+            x1,y1,x2,y2 = <span class="fn">map</span>(<span class="fn">int</span>,box.xyxy[<span class="num">0</span>])
+            name = model.names[<span class="fn">int</span>(box.cls[<span class="num">0</span>])]
+            confidence = <span class="fn">float</span>(box.conf[<span class="num">0</span>])
+
+            <span class="cm"># ④ 枠の色（演習③で決めた BGR 値）</span>
+            color = (<span class="num">0</span>, <span class="num">255</span>, <span class="num">0</span>)
+
+            cv2.<span class="fn">rectangle</span>(frame,(x1,y1),(x2,y2),color,<span class="num">2</span>)
+            cv2.<span class="fn">putText</span>(frame,<span class="fn">f</span><span class="str">'{name} {confidence:.2f}'</span>,
+                        (x1,y1-<span class="num">10</span>),cv2.FONT_HERSHEY_SIMPLEX,
+                        <span class="num">0.6</span>,color,<span class="num">2</span>)
+
+    cv2.<span class="fn">imshow</span>(<span class="str">'AI Object Detection'</span>, frame)
+    <span class="kw">if</span> cv2.<span class="fn">waitKey</span>(<span class="num">1</span>) &amp; <span class="num">0xFF</span> == <span class="fn">ord</span>(<span class="str">'q'</span>): <span class="kw">break</span>
+
+cap.<span class="fn">release</span>()
+cv2.<span class="fn">destroyAllWindows</span>()
+<span class="fn">print</span>(<span class="str">"終了しました"</span>)</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- チャレンジ                               -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="step-divider">🚀 チャレンジ！さらにカスタマイズしてみよう</div>
+
+  <div class="challenge-grid">
+    <div class="challenge-card">
+      <div class="challenge-head easy">🟢 EASY　枠の色を変えよう</div>
+      <div class="challenge-body">
+        <code style="font-family:monospace;color:var(--pink);">color = ( 0, 0, 255 )</code> に変えると赤になる。好きな色を試してみよう！
+      </div>
+    </div>
+    <div class="challenge-card">
+      <div class="challenge-head easy">🟢 EASY　自分の顔を映してみよう</div>
+      <div class="challenge-body">
+        カメラに顔を向けると <code style="font-family:monospace;">person</code> として検出されるか試してみよう。
+      </div>
+    </div>
+    <div class="challenge-card">
+      <div class="challenge-head normal">🔵 NORMAL　しきい値を変えよう</div>
+      <div class="challenge-body">
+        <code style="font-family:monospace;">conf=0.3</code> にすると検出数が増える？減る？<code style="font-family:monospace;">conf=0.8</code> はどう？
+      </div>
+    </div>
+    <div class="challenge-card">
+      <div class="challenge-head hard">🔴 HARD　枠の太さを変えよう</div>
+      <div class="challenge-body">
+        <code style="font-family:monospace;">rectangle(…, color, 2)</code> の最後の <code style="font-family:monospace;">2</code> を <code style="font-family:monospace;">5</code> に変えると枠が太くなる！
+      </div>
+    </div>
+  </div>
+
+  <!-- 答え合わせ一覧 -->
+  <div class="mt-24 mb-24">
+    <div class="section-title">
+      <div class="icon">📋</div>
+      答え合わせ一覧
+    </div>
+    <table class="answer-table">
+      <thead>
+        <tr>
+          <th>演習</th>
+          <th>入力箇所</th>
+          <th>答え</th>
+          <th>ポイント</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>①</td>
+          <td><code style="font-family:monospace;">VideoCapture( □□ )</code></td>
+          <td>0</td>
+          <td>内蔵カメラは 0 番</td>
+        </tr>
+        <tr>
+          <td>②</td>
+          <td><code style="font-family:monospace;">YOLO( '□□□□□□□□□□' )</code></td>
+          <td>yolov8n.pt</td>
+          <td>n = Nano（最速）</td>
+        </tr>
+        <tr>
+          <td>③</td>
+          <td><code style="font-family:monospace;">color = ( □,□,□ )</code></td>
+          <td>(0, 255, 0) など</td>
+          <td>BGR の順！赤は (0,0,255)</td>
+        </tr>
+        <tr>
+          <td>④</td>
+          <td><code style="font-family:monospace;">conf = □.□</code></td>
+          <td>0.5 推奨</td>
+          <td>0.3 で増える、0.8 で厳選</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ページナビ -->
+<div class="page-nav">
+  <a href="index.html" class="btn btn-outline">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    ホームに戻る
+  </a>
+  <span class="text-sm text-muted">お疲れさまでした！🎉</span>
+</div>
+
+<footer class="site-footer">
+  <strong>DX学科</strong> オープンキャンパス AI体験授業　フォローアップサイト
+</footer>
+
+<script src="main.js"></script>
+<script>
+// タブ切り替え
+function switchTab(btn, panelId) {
+  // ボタン
+  btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // パネル
+  const card = btn.closest('.step-body');
+  card.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+}
+
+// 進捗バーのアクティブ更新（スクロール連動）
+const steps = ['step1','step2','step3','step4','step5'];
+const psDots = document.querySelectorAll('#progress .progress-step');
+
+window.addEventListener('scroll', () => {
+  let current = 0;
+  steps.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < window.innerHeight * 0.5) {
+      current = i + 1;
+    }
+  });
+  psDots.forEach((dot, i) => {
+    dot.classList.remove('active', 'done');
+    if (i === 0) { dot.classList.add('done'); return; } // セットアップ完了
+    const stepIdx = i; // 1-based
+    if (stepIdx < current) dot.classList.add('done');
+    else if (stepIdx === current) dot.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

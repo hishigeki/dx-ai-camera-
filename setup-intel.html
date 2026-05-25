@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>セットアップ（Intel）| DX学科 AI体験</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .cpu-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(96,191,255,0.1);
+      border: 1px solid rgba(96,191,255,0.35);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: #60BFFF;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">DX</a>
+    <ul class="nav-links">
+      <li><a href="index.html">ホーム</a></li>
+      <li><a href="setup-intel.html" class="active">セットアップ（Intel）</a></li>
+      <li><a href="setup-amd.html">セットアップ（AMD）</a></li>
+      <li><a href="exercise.html">演習 Step 1〜5</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="cpu-badge">🔵 Intel CPU 版</div>
+  <h1>セットアップ<br><span class="accent">Intel CPU</span></h1>
+  <p>Python と VS Code をインストールして、演習の準備をしよう。<br>所要時間：約 5〜10 分</p>
+</section>
+
+<div class="section">
+
+  <!-- 進捗 -->
+  <div class="progress-bar">
+    <div class="progress-step active">
+      <div class="ps-circle">⚙</div>
+      <div class="ps-label">セットアップ<br>Intel</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">1</div>
+      <div class="ps-label">インストール</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">2</div>
+      <div class="ps-label">カメラ</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">3</div>
+      <div class="ps-label">AI検出</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">4</div>
+      <div class="ps-label">枠の色</div>
+    </div>
+    <div class="progress-step">
+      <div class="ps-circle">5</div>
+      <div class="ps-label">信頼度</div>
+    </div>
+  </div>
+
+  <!-- Step A: Python -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">A</div>
+      <div>
+        <div class="step-title">公式 Python をインストールする</div>
+        <div class="step-subtitle">Microsoftストア版ではなく、公式サイトからダウンロードします</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <p class="text-sm text-muted mb-12">ブラウザで以下の URL を開いてダウンロードしてください。</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">URL</span>
+          <button class="copy-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            コピー
+          </button>
+        </div>
+        <div class="code-content">
+          <pre>https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe</pre>
+        </div>
+      </div>
+
+      <div class="info-box warn mt-16">
+        <span class="ib-icon">⚠️</span>
+        <div class="ib-body">
+          <div class="ib-title">インストール時に必ずチェック！</div>
+          <p>インストール画面の一番下にある<br>
+          <code>"Add Python 3.11 to PATH"</code> にチェックを入れてから「Install Now」をクリック！<br>
+          これを忘れると Python が正しく動きません。</p>
+        </div>
+      </div>
+
+      <ul class="checklist mt-16">
+        <li>ダウンロードしてインストーラーを実行した</li>
+        <li>"Add Python 3.11 to PATH" にチェックを入れた</li>
+        <li>「Install Now」でインストール完了した</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Step B: VS Code -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">B</div>
+      <div>
+        <div class="step-title">VS Code をインストールする</div>
+        <div class="step-subtitle">コードを書くためのエディタです</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <p class="text-sm text-muted mb-12">ブラウザで以下の URL を開いてダウンロードしてください。</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">URL</span>
+          <button class="copy-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            コピー
+          </button>
+        </div>
+        <div class="code-content">
+          <pre>https://code.visualstudio.com/</pre>
+        </div>
+      </div>
+
+      <div class="info-box info mt-16">
+        <span class="ib-icon">💡</span>
+        <div class="ib-body">
+          <div class="ib-title">インストール後にやること</div>
+          <p>VS Code を起動 → 左サイドバーの拡張機能アイコン（四角が4つ）→ 検索バーに <code>Python</code> と入力 → Microsoft 製の「Python」をインストール</p>
+        </div>
+      </div>
+
+      <div class="info-box info mt-16">
+        <span class="ib-icon">📁</span>
+        <div class="ib-body">
+          <div class="ib-title">作業フォルダを作ろう</div>
+          <p>デスクトップに <code>ai_camera</code> というフォルダを作成 → VS Code で「ファイル」→「フォルダーを開く」→ <code>ai_camera</code> を選択</p>
+        </div>
+      </div>
+
+      <ul class="checklist mt-16">
+        <li>VS Code をインストールした</li>
+        <li>Python 拡張機能をインストールした</li>
+        <li>ai_camera フォルダを作って VS Code で開いた</li>
+        <li>VS Code を一度閉じて開き直した（Pythonを認識させるため）</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 完了 -->
+  <div class="info-box success">
+    <span class="ib-icon">✅</span>
+    <div class="ib-body">
+      <div class="ib-title">セットアップ完了！</div>
+      <p>Intel CPU のセットアップはこれで終わりです。次のページから演習を始めましょう。</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ページナビ -->
+<div class="page-nav">
+  <a href="index.html" class="btn btn-outline">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    ホームに戻る
+  </a>
+  <a href="exercise.html" class="btn btn-primary">
+    演習 Step 1 へ進む
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+</div>
+
+<footer class="site-footer">
+  <strong>DX学科</strong> オープンキャンパス AI体験授業　フォローアップサイト
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

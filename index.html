@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI画像認識カメラ体験 | DX学科</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* トップページ固有スタイル */
+    .hero-home { padding: 100px 24px 80px; }
+
+    .steps-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 32px 0;
+    }
+
+    .ov-step {
+      background: var(--navy-card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius-sm);
+      padding: 16px 12px;
+      text-align: center;
+      transition: border-color var(--transition);
+    }
+
+    .ov-step:hover { border-color: rgba(214,51,132,0.4); }
+
+    .ov-num {
+      display: inline-flex;
+      width: 28px; height: 28px;
+      background: rgba(214,51,132,0.15);
+      border: 1px solid rgba(214,51,132,0.4);
+      border-radius: 50%;
+      align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      color: var(--pink);
+      margin-bottom: 8px;
+    }
+
+    .ov-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .ov-step.setup .ov-num { color: #60BFFF; border-color: rgba(96,191,255,0.4); background: rgba(96,191,255,0.08); }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 32px 0;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    .cpu-select-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .cpu-select-sub {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    /* CPU確認方法 */
+    .how-to-check {
+      background: var(--navy-card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-top: 16px;
+    }
+
+    .how-to-check summary {
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .how-to-check summary::before {
+      content: '▶';
+      font-size: 10px;
+      color: var(--pink);
+      transition: transform var(--transition);
+    }
+
+    .how-to-check[open] summary::before { transform: rotate(90deg); }
+
+    .how-to-check-body {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .how-to-check-body ol {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+
+    .how-to-check-body code {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(255,255,255,0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    /* 特徴グリッド */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .feature {
+      background: rgba(214,51,132,0.05);
+      border: 1px solid rgba(214,51,132,0.15);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .feature-icon { font-size: 24px; margin-bottom: 8px; }
+    .feature-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: var(--pink-light); }
+    .feature-desc  { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+<!-- ナビ -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">DX</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">ホーム</a></li>
+      <li><a href="setup-intel.html">セットアップ（Intel）</a></li>
+      <li><a href="setup-amd.html">セットアップ（AMD）</a></li>
+      <li><a href="exercise.html">演習 Step 1〜5</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ヒーロー -->
+<section class="hero hero-home">
+  <div class="hero-badge">
+    <span></span>DX学科 オープンキャンパス フォローアップ
+  </div>
+  <h1>
+    自分のカメラで<br>
+    <span class="accent">AIが物体を認識</span>する<br>
+    体験をしよう
+  </h1>
+  <p>
+    Python + VS Code + YOLOv8 を使って、<br>
+    リアルタイム AI 物体検出プログラムを自宅で完成させよう。
+  </p>
+  <a href="#start" class="btn btn-primary">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    はじめる
+  </a>
+</section>
+
+<!-- 全体の流れ -->
+<div class="section">
+  <div class="section-title">
+    <div class="icon">📋</div>
+    今日やること
+  </div>
+
+  <div class="steps-overview">
+    <div class="ov-step setup">
+      <div class="ov-num">⚙</div>
+      <div class="ov-label">セットアップ<br>（CPU別）</div>
+    </div>
+    <div class="ov-step">
+      <div class="ov-num">1</div>
+      <div class="ov-label">ライブラリ<br>インストール</div>
+    </div>
+    <div class="ov-step">
+      <div class="ov-num">2</div>
+      <div class="ov-label">カメラを<br>起動する</div>
+    </div>
+    <div class="ov-step">
+      <div class="ov-num">3</div>
+      <div class="ov-label">AIで物体<br>を検出</div>
+    </div>
+    <div class="ov-step">
+      <div class="ov-num">4</div>
+      <div class="ov-label">枠の色を<br>決める</div>
+    </div>
+    <div class="ov-step">
+      <div class="ov-num">5</div>
+      <div class="ov-label">信頼度を<br>設定する</div>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">⏱</div>
+      <div class="feature-title">所要時間：約 15〜20 分</div>
+      <div class="feature-desc">セットアップからAI起動まで段階的に進めます</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">💻</div>
+      <div class="feature-title">Windows 11 対応</div>
+      <div class="feature-desc">Intel・AMD どちらの CPU でも動作します</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📋</div>
+      <div class="feature-title">コードはコピペOK</div>
+      <div class="feature-desc">ボタン1つでターミナルに貼り付けられます</div>
+    </div>
+  </div>
+</div>
+
+<!-- CPU選択 -->
+<div class="section" id="start">
+  <div class="section-title">
+    <div class="icon">🖥</div>
+    CPU の種類を選んでください
+  </div>
+
+  <p class="cpu-select-sub">セットアップ手順が CPU によって異なります。まず自分のパソコンの CPU を確認してから選んでください。</p>
+
+  <div class="cpu-grid">
+    <a href="setup-intel.html" class="cpu-card intel">
+      <span class="cpu-icon">🔵</span>
+      <div class="cpu-name">Intel CPU</div>
+      <div class="cpu-desc">Core i3 / i5 / i7 / i9<br>セットアップ：約 5〜10 分</div>
+    </a>
+    <a href="setup-amd.html" class="cpu-card amd">
+      <span class="cpu-icon">🔴</span>
+      <div class="cpu-name">AMD CPU</div>
+      <div class="cpu-desc">Ryzen 3 / 5 / 7 / 9<br>セットアップ：約 10〜15 分</div>
+    </a>
+  </div>
+
+  <details class="how-to-check">
+    <summary>自分の CPU の確認方法がわからない場合</summary>
+    <div class="how-to-check-body">
+      <ol>
+        <li>キーボードの <code>Windows</code> キー + <code>R</code> を押す</li>
+        <li><code>dxdiag</code> と入力して Enter</li>
+        <li>「プロセッサ」の欄に <strong>Intel</strong> または <strong>AMD</strong> と表示されます</li>
+      </ol>
+      <p style="margin-top:10px;">または、タスクバーを右クリック →「タスクマネージャー」→「パフォーマンス」→「CPU」でも確認できます。</p>
+    </div>
+  </details>
+</div>
+
+<!-- フッター -->
+<footer class="site-footer">
+  <strong>DX学科</strong> オープンキャンパス AI体験授業　フォローアップサイト
+</footer>
+
+</body>
+</html>
